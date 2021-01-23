@@ -34,7 +34,7 @@ function get($name) {
 
 }
 
-function abort(int $statusCode = 404, Exception $exception = null) 
+function abort(int $statusCode = 404, Throwable $exception = null) 
 {
 
 		// Flush the current output buffer
@@ -44,7 +44,7 @@ function abort(int $statusCode = 404, Exception $exception = null)
 		$template = sprintf('view/abort.%d.php', (int) $statusCode);
 		$template = stream_resolve_include_path($template);
 		if ($template === false) {
-			$template = 'templates/abort.php';
+			$template = 'view/abort.php';
 		}
 
 		// Log the issue
@@ -68,7 +68,7 @@ function redirect_for($name, array $args = [], int $statusCode = 302) {
 }
 
 function url($path = null, array $args = []) {
-    $url = BASE_URL . ltrim($path, '/');
+    $url = BASE . ltrim($path, '/');
     if ($args) {
     	$url .= '?'.http_build_query($args); 
     }
@@ -91,7 +91,7 @@ function current_url(array $args = []) {
 }
 
 function asset($path) {
-    $source = PUBLIC . '/' . ltrim($path, '/');
+    $source = PUB . '/' . ltrim($path, '/');
     return url($path) . '?' . filemtime($source);
 }
 
