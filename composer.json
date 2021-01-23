@@ -1,0 +1,27 @@
+{
+    "name": "plainphp/library",
+    "description": "The library of the PlainPhp Framework.",
+    "type": "library",
+    "keywords": [
+        "framework", "database"
+    ],
+    "homepage": "https://github.com/PlainPhpFramework/project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Francesco Terenzani",
+            "email": "f.terenzani@gmail.com",
+        }
+    ],
+    "require": {
+        "php": ">=8.0"
+    },
+    "autoload": {
+        "classmap": [
+            "src/"
+        ],
+        "files": [
+            "src/functions.php"
+        ]
+    }
+}
