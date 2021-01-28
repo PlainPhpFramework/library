@@ -40,6 +40,9 @@ function abort(int $statusCode = 404, Throwable $exception = null)
 		// Flush the current output buffer
 		while(ob_get_level()) ob_end_clean();
 
+		// Set the status code
+		http_response_code($statusCode);
+
 		// Search for a specific template or fallback in a generic one
 		$template = sprintf('view/abort.%d.php', (int) $statusCode);
 		$template = stream_resolve_include_path($template);
@@ -68,7 +71,7 @@ function redirect_for($name, array $args = [], int $statusCode = 302) {
 }
 
 function url($path = null, array $args = []) {
-    $url = BASE . ltrim($path, '/');
+    $url = BASE_URL . ltrim($path, '/');
     if ($args) {
     	$url .= '?'.http_build_query($args); 
     }
