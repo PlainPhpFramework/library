@@ -116,3 +116,9 @@ function fetch($template, array $vars = []) {
 	render($template, $vars);
 	return ob_get_clean();
 }
+
+function get_ob() {
+	$ob = ob_get_clean();
+	ob_start();
+	return $ob;
+}

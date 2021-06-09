@@ -25,14 +25,20 @@ class Db extends \PDO
 
 	}
 
-	function query($sql, $params = array()) 
+	function query(string $query, $fetchMode = null, ...$fetchModeArgs) 
 	{
-		$stmt = $this->prepare($sql);
+
+		if (is_null($fetchMode) || is_int($fetchMode)) {
+			return parent::query($query, $fetchMode, $fetchModeArgs);
+		}
+
+		$params = $fetchMode;
+		$stmt = $this->prepare($query);
 		$stmt->execute($params);
 		return $stmt;
 	}
 
-	function exec($sql, $params = array())
+	function exec($sql, array $params = null)
 	{
 		$stmt = $this->query($sql, $params);
 		return $stmt->rowCount();
