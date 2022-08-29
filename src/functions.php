@@ -79,14 +79,44 @@ function url($path = null, array $args = []) {
 }
 
 function url_for($name, array $args = []) {
-	$name = ltrim($name, '/');
-	$urls = get('urls');
-	if (isset($urls[$name])) {
-		$url = $urls[$name]($args);
-	} else {
-		$url = url($name, $args);
+	static $map, $paramRegex, $defaultAction;
+
+	if (!is_array($map)) {
+
+		// [controller/action => pattern, ...]
+		$map = array_flip(get('routing')->routes);
+
+		// Defined parameters :(id|slug|...)
+		$paramRegex = ':('.implode('|', array_keys(get('routing')->params)).')\??';
+
+		// The default action
+		$defaultAction = '/'.ltrim(get('routing')->default_action, '/');
+
 	}
-    return $url;
+
+	$name = ltrim($name, '/');
+
+	// The controller/action is rewritten
+	if (isset($map[$name])) {
+
+		// List of the parameters in the pattern
+		$url = $map[$name];
+		$paramsInPattern = preg_match_all("#$paramRegex#", $url, $matches);
+		foreach($matches[1] as $match) {
+			$url = str_replace(':'.$match, @$args[$match], $url);
+			unset($args[$match]);
+		}
+		$url = str_replace('?', '', $url);
+
+	} else {
+		$url = $name;
+		if (substr($url, -strlen($defaultAction)) === $defaultAction) {
+			$url = substr($url, 0, -strlen($defaultAction)+1);
+		}
+	}
+
+    return url($url, $args);
+
 }
 
 function current_url(array $args = []) {

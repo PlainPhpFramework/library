@@ -17,7 +17,7 @@ namespace pp;
  * Subscribe to filter values:
  * 
  * ```
- * Hook::$on['event_name'][] = function(&$var1, &$varN) {};
+ * Hook::$on['event_name'][] = function(&$var1) {};
  * ```
  * 
  * Subscribe end avoid next observers to run:
@@ -60,11 +60,11 @@ class Hook
 	 * Trigger an event and notify the observers
 	 * 
 	 * @var string   $eventName 	The name of the event
-	 * @var ...mixin $arguments		Event related arguments
+	 * @var mixin $argument		Event related argument
 	 * 
 	 * @return void
 	 */
-	static function trigger($eventName, &...$arguments) : void
+	static function trigger($eventName, &$argument = null): void
 	{
 
 		// There are subscribers
@@ -73,7 +73,7 @@ class Hook
 			// Notify the subscribers. If a subscriber return false, 
 			// stop the propagation
 			foreach (static::$on[$eventName] as $callback) {
-				if (false === $callback(...$arguments)) {
+				if (false === $callback($argument)) {
 					break;
 				}
 			}
