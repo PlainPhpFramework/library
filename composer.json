@@ -3,7 +3,7 @@
     "description": "The library of the PlainPhp Framework.",
     "type": "library",
     "keywords": [
-        "framework", "database"
+        "framework", "database", "event dispatcher", "observer"
     ],
     "homepage": "https://github.com/PlainPhpFramework/project",
     "license": "MIT",
@@ -23,5 +23,8 @@
         "files": [
             "src/functions.php"
         ]
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9"
     }
 }
