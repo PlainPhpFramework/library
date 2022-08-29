@@ -50,6 +50,7 @@ final class HookTest extends TestCase
 
     }
 
+
     public function testStopPropagation(): void
     {
 
@@ -66,6 +67,25 @@ final class HookTest extends TestCase
         $counter = 0;
 
         Hook::trigger('test_event_3', $counter);
+
+        $this->assertSame(
+            1,
+            $counter
+        );
+
+    }
+
+
+    public function testObserverWithoutParameterRun(): void
+    {
+
+
+        $counter = 0;
+        Hook::$on['test_event_4'][] = function () use(&$counter)  {
+            $counter++;
+        };
+
+        Hook::trigger('test_event_4', $counter);
 
         $this->assertSame(
             1,
