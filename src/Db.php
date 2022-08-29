@@ -25,14 +25,8 @@ class Db extends \PDO
 
 	}
 
-	function query(string $query, $fetchMode = null, ...$fetchModeArgs) 
+	function execute($query, $params = null)
 	{
-
-		if (is_null($fetchMode) || is_int($fetchMode)) {
-			return parent::query($query, $fetchMode, $fetchModeArgs);
-		}
-
-		$params = $fetchMode;
 		$stmt = $this->prepare($query);
 		$stmt->execute($params);
 		return $stmt;
@@ -40,7 +34,7 @@ class Db extends \PDO
 
 	function exec($sql, array $params = null)
 	{
-		$stmt = $this->query($sql, $params);
+		$stmt = $this->execute($sql, $params);
 		return $stmt->rowCount();
 	}
 
@@ -52,14 +46,13 @@ class Db extends \PDO
 class Statement extends \PDOStatement
 {
 
-	function execute($parameters = null) 
+	function execute($params = null) 
 	{
-
-		if (!is_array($parameters)) {
-			$parameters = array($parameters);
+		if (!is_null($params) && !is_array($params)) {
+			$params = array($params);
 		}
 
-		return parent::execute($parameters);
+		return parent::execute($params);
 	}
 
 	function fetchObjects($className = 'stdClass', array $constructorArgs = array())
