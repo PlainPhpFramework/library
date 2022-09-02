@@ -32,7 +32,7 @@ use Pelago\Emogrifier\CssInliner;
  * 
  * // An alternative that allow replacing parameters in message
  * $email = $mailer->compileMessage('path/to/email_message.php', ['order' => $order]);
- * $html = $email->getHtml();
+ * $html = $email->getHtmlBody();
  * 
  * $html = str_replace('{user}', $user->name, $html);
  * 
@@ -63,97 +63,97 @@ use Pelago\Emogrifier\CssInliner;
 abstract class Mailer 
 {
 
-    function __construct(
-    	public sfMailer $mailer,
-    	public string $baseUrl = 'http://example.com/',
-    	public string $basePath = '/path/to/www',
-    ) {}
+	function __construct(
+		public sfMailer $mailer,
+		public string $baseUrl = 'http://example.com/',
+		public string $basePath = '/path/to/www',
+	) {}
 
-    abstract function newEmail(): Email;
+	abstract function newEmail(): Email;
 
-    function compileMessage($message, array $context = null) 
-    {
-    	
+	function compileMessage($message, array $context = null) 
+	{
+		
 
-    	$email = $this->newEmail();
+		$email = $this->newEmail();
 
         // Render the message view
-        extract($context, EXTR_SKIP);
-        ob_start();
-        require $message;
-        $message = ob_get_clean();
+		extract($context, EXTR_SKIP);
+		ob_start();
+		require $message;
+		$message = ob_get_clean();
 
         // Inline the CSS
-        $message = CssInliner::fromHtml($message)->inlineCss()->render();
+		$message = CssInliner::fromHtml($message)->inlineCss()->render();
 
         // Embed images
-        $base = rtrim($this->baseUrl, '/') . '/';
-        $www = rtrim($this->basePath, '/') . '/';
+		$base = rtrim($this->baseUrl, '/') . '/';
+		$www = rtrim($this->basePath, '/') . '/';
 
-        if (preg_match_all('#(<[^>]+(?:src|background))=["\']('.preg_quote($base).'.*)["\']#Ui', $message, $images)) {
-	  
-	    	$cids = [];
-            foreach ($images[2] as $index => $url) {
+		if (preg_match_all('#(<[^>]+(?:src|background))=["\']('.preg_quote($base).'.*)["\']#Ui', $message, $images)) {
+			
+			$cids = [];
+			foreach ($images[2] as $index => $url) {
 
-                $cid = str_replace([$base, '?'.parse_url($url, PHP_URL_QUERY)], '', $url);
-                $path = $www . $cid;
+				$cid = str_replace([$base, '?'.parse_url($url, PHP_URL_QUERY)], '', $url);
+				$path = $www . $cid;
 
-                if (!isset($cids[$cid])) {
-                    $cids[$cid] = true;
-                    $email->attachFromPath($path, $cid);
-                }
+				if (!isset($cids[$cid])) {
+					$cids[$cid] = true;
+					$email->attachFromPath($path, $cid);
+				}
 
-                $message = str_replace(
-                    $images[0][$index], 
-                    $images[1][$index]."='cid:$cid'",
-                    $message);
+				$message = str_replace(
+					$images[0][$index], 
+					$images[1][$index]."='cid:$cid'",
+					$message);
 
-            }
+			}
 
-        }
+		}
 
-        $email->html($message);
+		$email->html($message);
 
-        return $email;
+		return $email;
 
-    }
+	}
 
-    function send(
-        string $message = null, 
-        array $context = null, 
-        string $subject = null, 
-        string|array $to, 
-        string $html = null, 
-        string $text = null,
-        string|array $cc = null,
-        string|array $bcc = null,
-        string|array $replyTo = null,
-        string|array $from = null,
-        string|array $sender = null,
-        string|array $attach = null
-    ) 
-    {
+	function send(
+		string $message = null, 
+		array $context = null, 
+		string $subject = null, 
+		string|array $to, 
+		string $html = null, 
+		string $text = null,
+		string|array $cc = null,
+		string|array $bcc = null,
+		string|array $replyTo = null,
+		string|array $from = null,
+		string|array $sender = null,
+		string|array $attach = null
+	) 
+	{
 
-        $email = ($message && is_string($message))? 
-        	$this->compileMessage($message, $context):
-        	$this->newEmail()
-        ;
+		$email = ($message && is_string($message))? 
+		$this->compileMessage($message, $context):
+		$this->newEmail()
+		;
 
-        $to && $email->to(...(array) $to);
-        $cc && $email->cc(...(array) $cc);
-        $bcc && $email->bcc(...(array) $bcc);
-        $replyTo && $email->replyTo(...(array) $replyTo);
-        $from && $email->from(...(array) $from);
-        $sender && $email->sender(...(array) $sender);
+		$to && $email->to(...(array) $to);
+		$cc && $email->cc(...(array) $cc);
+		$bcc && $email->bcc(...(array) $bcc);
+		$replyTo && $email->replyTo(...(array) $replyTo);
+		$from && $email->from(...(array) $from);
+		$sender && $email->sender(...(array) $sender);
 
-        $subject && $email->subject($subject);
-        $html && $email->html($html);
-        $text && $email->text($text);
+		$subject && $email->subject($subject);
+		$html && $email->html($html);
+		$text && $email->text($text);
 
-        $attach && array_map([$email, 'attachFromPath'], (array) $attach);
+		$attach && array_map([$email, 'attachFromPath'], (array) $attach);
 
-        $this->mailer->send($email);
+		$this->mailer->send($email);
 
-    }
+	}
 
 }
