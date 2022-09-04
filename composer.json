@@ -21,9 +21,6 @@
     "autoload": {
         "classmap": [
             "src/"
-        ],
-        "files": [
-            "src/functions.php"
         ]
     },
     "require-dev": {

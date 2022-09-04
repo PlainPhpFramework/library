@@ -60,6 +60,7 @@ use Pelago\Emogrifier\CssInliner;
  * $mailer->mailer->send($email);
  */
 
+
 abstract class Mailer 
 {
 
