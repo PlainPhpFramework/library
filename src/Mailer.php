@@ -123,7 +123,7 @@ abstract class Mailer
 		string $message = null, 
 		array $context = null, 
 		string $subject = null, 
-		string|array $to, 
+		string|array $to  = null,
 		string $html = null, 
 		string $text = null,
 		string|array $cc = null,
