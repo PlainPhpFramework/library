@@ -9,14 +9,14 @@ final class HookTest extends TestCase
     public function testTriggerParameterCanBeModified(): void
     {
 
-        Hook::$on['test_event'][] = function (&$counter) {
+        Hook::on('test_event', function (&$counter) {
             $counter++;
-        };
-        
-        Hook::$on['test_event'][] = function ($counter) {
-            $counter++;
-        };
+        });
 
+        Hook::on('test_event', function ($counter) {
+            $counter++;
+        });
+        
         $counter = 0;
 
         Hook::trigger('test_event', $counter);
@@ -31,13 +31,13 @@ final class HookTest extends TestCase
     {
 
 
-        Hook::$on['test_event_2'][] = function (&$counter) {
+        Hook::on('test_event_2', function (&$counter) {
             $counter++;
-        };
+        });
 
-        Hook::$on['test_event_2'][] = function (&$counter) {
+        Hook::on('test_event_2', function (&$counter) {
             $counter++;
-        };
+        });
 
         $counter = 0;
 
@@ -54,15 +54,15 @@ final class HookTest extends TestCase
     public function testStopPropagation(): void
     {
 
-        Hook::$on['test_event_3'][] = function (&$counter) {
+        Hook::on('test_event_3', function (&$counter) {
             $counter++;
             // Stop propagation
             return false;
-        };
+        });
 
-        Hook::$on['test_event_3'][] = function (&$counter) {
+        Hook::on('test_event_3', function (&$counter) {
             $counter++;
-        };
+        });
 
         $counter = 0;
 
@@ -81,15 +81,39 @@ final class HookTest extends TestCase
 
 
         $counter = 0;
-        Hook::$on['test_event_4'][] = function () use(&$counter)  {
+        Hook::on('test_event_4', function () use(&$counter)  {
             $counter++;
-        };
+        });
 
         Hook::trigger('test_event_4', $counter);
 
         $this->assertSame(
             1,
             $counter
+        );
+
+    }
+
+    public function testPriority(): void
+    {
+
+
+        $number = 2;
+
+        Hook::on('test_event_5', function (&$number)  {
+            $number *= $number;
+        });
+
+        Hook::on('test_event_5', function (&$number)  {
+            $number--;
+
+        }, priority: -1);
+
+        Hook::trigger('test_event_5', $number);
+
+        $this->assertSame(
+            1,
+            $number
         );
 
     }
