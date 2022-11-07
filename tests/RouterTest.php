@@ -1,21 +1,22 @@
 <?php declare(strict_types=1);
 use PHPUnit\Framework\TestCase;
 
+use pp\AppRouter;
 use pp\Router;
 
 final class RouterTest extends TestCase
 {
 
+    static AppRouter $appRouter;
     static Router $router;
 
     public function setUp(): void
     {
 
+        $appRouter = new AppRouter;
         $router = new Router;
 
-        //$router->controllerMap->add('path/from', 'path/to/controller');
-        //$router->namespaceMap->add('path/from', 'path/to/namespace');
-
+        self::$appRouter = $appRouter;
         self::$router = $router;
 
     }
@@ -226,6 +227,18 @@ final class RouterTest extends TestCase
             self::$router->reverse('my/backend_controller/index')
         );
 
+    }
+
+    function testAppRouter()
+    {
+        $this->assertEquals(
+            ['\\App\\Controller\\my\\hello_controller', 'world_http'],
+            self::$appRouter->dispatch('my/hello/world')
+        );
+        $this->assertEquals(
+            'my/hello/world',
+            self::$appRouter->reverse([\App\Controller\my\hello_controller::class, 'world'])
+        );
     }
 
 }
