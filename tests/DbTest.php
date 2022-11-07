@@ -25,21 +25,6 @@ final class DbTest extends TestCase
 
     }
 
-    
-    public function testExec(): void
-    {
-
-        $row = [
-            'name' => 'my name',
-            'value' => 'my value',
-        ];
- 
-        $rowCount = $this->db->exec('INSERT INTO mytest (name, value) VALUES (:name, :value)', $row);
-
-        $this->assertSame(1, $rowCount);
-
-    }
-
     public function testExecute(): void
     {
 
@@ -48,7 +33,7 @@ final class DbTest extends TestCase
             'name' => 'my name',
             'value' => 'my value',
         ];
-        $this->db->exec('INSERT INTO mytest (name, value) VALUES (:name, :value)', $row);
+        $this->db->execute('INSERT INTO mytest (name, value) VALUES (:name, :value)', $row);
 
         // Retrive
         $stmt = $this->db->execute('SELECT name, value FROM mytest WHERE name = :name AND value = :value', $row);
@@ -101,6 +86,43 @@ final class DbTest extends TestCase
         $this->assertSame(2, count($values));
         $this->assertEquals(array_map(fn($row) => (object)$row, $rows), $values);
 
+    }
+
+
+    public function testRowCount(): void
+    {
+
+        $row = [
+            'name' => 'test name',
+            'value' => 'test value',
+        ];
+
+        $this->assertSame(
+            1, 
+            $this->db->rowCount('INSERT INTO mytest (name, value) VALUES (:name, :value)', $row)
+        );
+
+    }
+
+    public function testInsertId(): void
+    {
+
+        $row = [
+            'name' => 'test name',
+            'value' => 'test value',
+        ];
+
+        $this->assertSame(
+            '1', 
+            $this->db->insertId('INSERT INTO mytest (name, value) VALUES (:name, :value)', $row)
+        );
+
+    }
+
+    public function testGetHelper(): void
+    {
+        $helper = $this->db->getHelper();
+        $this->assertInstanceOf(\pp\QueryHelper::class, $helper);
     }
 
 }

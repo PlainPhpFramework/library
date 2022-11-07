@@ -25,17 +25,28 @@ class Db extends \PDO
 
 	}
 
-	function execute($query, $params = null)
+	function execute($query, ?array $params = null)
 	{
 		$stmt = $this->prepare($query);
 		$stmt->execute($params);
 		return $stmt;
 	}
 
-	function exec($sql, array $params = null)
+	function rowCount($sql, ?array $params = null)
 	{
 		$stmt = $this->execute($sql, $params);
 		return $stmt->rowCount();
+	}
+
+	function insertId($sql, ?array $params = null)
+	{
+		$this->execute($sql, $params);
+		return $this->lastInsertId();
+	}
+
+	function getHelper()
+	{
+		return new QueryHelper($this);
 	}
 
 }
