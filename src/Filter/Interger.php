@@ -2,6 +2,8 @@
 
 namespace pp\Filter;
 
+use pp\Validator\Number;
+
 class Integer
 {
 
@@ -17,12 +19,9 @@ class Integer
 	function __invoke($value)
 	{
 
-		$value = (int) $value;
-
 		if (
-			($this->min && $value < $this->min)
-			|| ($this->max && $value > $this->max)
-			|| ($this->step && $value % $this->step !== 0)
+			!is_integer($value)
+			|| !(new Number(min: $this->min, max: $this->max, step: $this->step))->isValid($value)
 		) {
 			return $this->default;
 		}

@@ -8,7 +8,7 @@ class In
 	function __construct(
 		public array $array = [],
 		public $default = null,
-		public bool $strict = false
+		public bool $strict = true
 	)
 	{
 	}

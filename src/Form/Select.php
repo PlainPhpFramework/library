@@ -52,13 +52,7 @@ class Select extends Element
 	{
 		$this->name = $name;
 		$this->attributes['name'] = $parentPrefix? sprintf('%s[%s]', $parentPrefix, $name): $name;
-
-		$multiple = @$this->attributes['multiple']?: false;
-
-		if ($multiple) {
-			$this->attributes['name'] .= '[]';
-		}
-
+		$this->attributes['id'] = str_replace(['[', ']'], ['-', ''], $this->attributes['name']);
 	}
 
 	function getData()

@@ -4,6 +4,21 @@ namespace pp\Form;
 
 class ViewHelper
 {
+
+	static $paths = [];
+
+	static function resolve_path($file)
+	{
+
+	    foreach (static::$paths as $path) {
+	        if ($fullpath = stream_resolve_include_path($path . '/' . $file)) {
+	            return $fullpath;
+	        }
+	    }
+
+	    return false;
+	}
+
 	static function label_for(Element $element, array $attr = [])
 	{
 		if (!isset($attr['for'])) {

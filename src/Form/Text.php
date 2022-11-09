@@ -3,7 +3,6 @@
 namespace pp\Form;
 
 use pp\Validator\Text as TextValidator;
-use pp\Validator\Chain as ChainValidator;
 
 class Text extends Element
 {
@@ -12,28 +11,18 @@ class Text extends Element
 		'type' => 'text'
 	];
 
-	function getValidator() 
+	function setValidators(array $validators) 
 	{
 
-		if (!isset($this->validatorObject)) {
-			
-			$validator = new TextValidator(
-				required: @$this->attributes['required']?? false,
-				minlength: @$this->attributes['minlength']?? null,
-				maxlength: @$this->attributes['maxlength']?? null,
-				pattern: @$this->attributes['pattern']?? null,
-				encoding: @$this->extra['encoding']?? null,
-			);
+		array_unshift($validators, new TextValidator(
+			required: @$this->attributes['required']?? false,
+			minlength: @$this->attributes['minlength']?? null,
+			maxlength: @$this->attributes['maxlength']?? null,
+			pattern: @$this->attributes['pattern']?? null,
+			encoding: @$this->extra['encoding']?? null,
+		));
 
-			if ($this->validators) {
-				$validator = new ChainValidator($validator, ...$this->validators);
-			}
-
-			$this->validatorObject = $validator;
-
-		}
-
-		return $this->validatorObject;
+		$this->validators = $validators;
 
 	}
 

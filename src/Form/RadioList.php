@@ -25,9 +25,9 @@ class RadioList extends Element
 
 	function setName($name, $parentPrefix = null) 
 	{
-		$this->name = $name;
-		$this->attributes['name'] = $parentPrefix? sprintf('%s[%s]', $parentPrefix, $name): $name;
 
+		parent::setName($name, $parentPrefix);
+		
 		$i = 0;
 		foreach ($this->elements as $name => $e)
 		{
